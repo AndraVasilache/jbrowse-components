@@ -187,6 +187,11 @@ const stateModelFactory = (configSchema: any) =>
                 try {
                   const aborter = new AbortController()
                   self.setLoading(aborter)
+                  const { dynamicBlocks } = getContainingView(self)
+                  if (!dynamicBlocks.contentBlocks.length && !self.ready) {
+                    return
+                  }
+
                   const stats = await getStats(aborter.signal)
 
                   // check if stats returned from empty region

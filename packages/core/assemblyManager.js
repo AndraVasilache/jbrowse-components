@@ -12,13 +12,14 @@ export default self => {
     cache: new QuickLRU({ maxSize: 1000 }),
 
     // the `fill` callback will be called for a cache miss
-    async fill({ adapterConf, assemblyName, stateGroupName }, signal) {
+    async fill({ adapterConf, assemblyName, stateGroupName, opts }, signal) {
       const assemblyConfig = self.assemblyData.get(assemblyName)
       let sequenceConfig = {}
       if (assemblyConfig && assemblyConfig.sequence) {
         sequenceConfig = getSnapshot(assemblyConfig.sequence.adapter)
       }
       const refNameAliases = await self.getRefNameAliases(assemblyName, {
+        ...opts,
         signal,
       })
       const adapterConfigId = jsonStableStringify(adapterConf)

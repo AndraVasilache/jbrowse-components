@@ -1,4 +1,3 @@
-import jsonStableStringify from 'json-stable-stringify'
 import {
   ConfigurationReference,
   getConf,
@@ -9,17 +8,9 @@ import {
   getParentRenderProps,
   getTrackAssemblyNames,
 } from '@gmod/jbrowse-core/util/tracks'
-import blockBasedTrackModel, {
-  BlockBasedTrackStateModel,
-} from '@gmod/jbrowse-plugin-linear-genome-view/src/BasicTrack/blockBasedTrackModel'
+import blockBasedTrackModel from '@gmod/jbrowse-plugin-linear-genome-view/src/BasicTrack/blockBasedTrackModel'
 import { autorun, observable } from 'mobx'
-import {
-  addDisposer,
-  getSnapshot,
-  getParent,
-  isAlive,
-  types,
-} from 'mobx-state-tree'
+import { addDisposer, getSnapshot, isAlive, types } from 'mobx-state-tree'
 import React from 'react'
 import { getNiceDomain } from '../util'
 import WiggleTrackComponent from './components/WiggleTrackComponent'
@@ -36,7 +27,7 @@ const stateModelFactory = (configSchema: any) =>
   types
     .compose(
       'WiggleTrack',
-      blockBasedTrackModel as BlockBasedTrackStateModel,
+      blockBasedTrackModel,
       types
         .model({
           type: types.literal('WiggleTrack'),
@@ -133,11 +124,21 @@ const stateModelFactory = (configSchema: any) =>
         const nd = getConf(self, 'numStdDev')
         const autoscaleType = getConf(self, 'autoscale', {})
         const { adapter } = self.configuration
+        const { assemblyData } = getSession(self) as any
+        const assemblyName = getTrackAssemblyNames(self)[0]
+        const trackAssemblyData =
+          (assemblyData && assemblyData.get(assemblyName)) || {}
+
+        let sequenceConfig: any
+        if (trackAssemblyData.sequence) {
+          sequenceConfig = getSnapshot(trackAssemblyData.sequence.adapter)
+        }
         if (autoscaleType === 'global' || autoscaleType === 'globalsd') {
           const r = await rpcManager.call('statsGathering', 'getGlobalStats', {
             adapterConfig: getSnapshot(adapter),
             adapterType: adapter.type,
-            signal,
+            sequenceAdapterType: sequenceConfig.type,
+            sequenceAdapterConfig: sequenceConfig,
           })
           return autoscaleType === 'globalsd'
             ? {
@@ -152,19 +153,16 @@ const stateModelFactory = (configSchema: any) =>
         }
         if (autoscaleType === 'local' || autoscaleType === 'localsd') {
           const { dynamicBlocks, bpPerPx } = getContainingView(self)
-          const adapterConfig = getSnapshot(adapter)
-          const parentTrack = getParent(self)
-          const adapterConfigId = parentTrack.configuration
-            ? jsonStableStringify(getConf(parentTrack, 'adapter'))
-            : jsonStableStringify(adapterConfig)
           const r = await rpcManager.call(
-            adapterConfigId,
+            'statsGathering',
             'getMultiRegionStats',
             {
-              adapterConfig,
+              adapterConfig: getSnapshot(adapter),
               adapterType: adapter.type,
+              sequenceAdapterType: sequenceConfig.type,
+              sequenceAdapterConfig: sequenceConfig,
               // TODO: Figure this out for multiple assembly names
-              assemblyName: getTrackAssemblyNames(self)[0],
+              assemblyName,
               regions: JSON.parse(JSON.stringify(dynamicBlocks.contentBlocks)),
               signal,
               bpPerPx,
@@ -185,6 +183,8 @@ const stateModelFactory = (configSchema: any) =>
           return rpcManager.call('statsGathering', 'getGlobalStats', {
             adapterConfig: getSnapshot(adapter),
             adapterType: adapter.type,
+            sequenceAdapterType: sequenceConfig.type,
+            sequenceAdapterConfig: sequenceConfig,
             signal,
           })
         }

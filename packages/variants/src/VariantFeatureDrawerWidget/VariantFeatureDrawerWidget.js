@@ -7,11 +7,14 @@ import TableCell from '@material-ui/core/TableCell'
 import TableHead from '@material-ui/core/TableHead'
 import TableRow from '@material-ui/core/TableRow'
 import { observer, PropTypes as MobxPropTypes } from 'mobx-react'
-import PropTypes from 'prop-types'
-import React from 'react'
+import PropTypes, { element } from 'prop-types'
+import React, { useState, useEffect } from 'react'
 import BaseFeatureDetail, {
   BaseCard,
+  BaseAttributes,
+  BaseTranscripts,
 } from '@gmod/jbrowse-core/BaseFeatureDrawerWidget/BaseFeatureDetail'
+import { async } from 'rxjs/internal/scheduler/async'
 
 const useStyles = makeStyles(theme => ({
   table: {
@@ -99,15 +102,73 @@ VariantSamples.propTypes = {
 }
 
 function VariantFeatureDetails(props) {
+  const consequences = []
+  const [data, setData] = useState()
   const classes = useStyles()
   const { model } = props
   const feat = JSON.parse(JSON.stringify(model.featureData))
   const { samples, ...rest } = feat
+  const { ALT, CHROM, start, end } = feat
+  //const query = `${CHROM}:${start}:${end}/${ALT[0]}`
+  const query = "1:6524705:6524705/T"
+
+  useEffect(() => {
+    const controller = new AbortController()
+    const { signal } = controller
+    async function ensembl() {
+      try {
+        const response = await fetch(
+          `https://rest.ensembl.org/vep/human/region/${query}?content-type=application/json`,
+          { signal },
+        )
+        const content = await response.json()
+        setData(content)
+      } catch (error) {
+        if (!signal.aborted) console.error(error)
+      }
+    }
+
+    ensembl()
+    return () => {
+      controller.abort()
+    }
+  }, [query])
+
+  if (data !== undefined) {
+    const array = data[0].transcript_consequences
+    array.forEach(arrayItem => {
+      let x = new Object()
+
+      if (arrayItem.consequence_terms !== undefined) {
+        x.consequence_terms = arrayItem.consequence_terms
+      }
+
+      if (arrayItem.biotype !== undefined) {
+        x.biotype = arrayItem.biotype
+      }
+
+      if (arrayItem.variant_allele !== undefined) {
+        x.variant_allele = arrayItem.variant_allele
+      }
+      consequences.push(x)
+    })
+  }
+
   return (
     <Paper className={classes.root} data-testid="variant-side-drawer">
       <BaseFeatureDetail feature={rest} {...props} />
       <Divider />
       <VariantSamples feature={feat} {...props} />
+      <Divider />
+      <BaseCard {...props} title="Consequences">
+        {consequences &&
+          consequences.map(elem => (
+            <>
+              {' '}
+              <BaseTranscripts feature={elem} {...props} /> <Divider />{' '}
+            </>
+          ))}
+      </BaseCard>
     </Paper>
   )
 }

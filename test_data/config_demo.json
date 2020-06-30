@@ -1454,7 +1454,36 @@
           }
         }
       }
-    },
+    }, {
+    "type": "VariantTrack",
+      "trackId": "1000_genomes_variants",
+      "name": "1000 genomes variants",
+      "assemblyNames": [
+        "hg38"
+      ],
+      "category": [
+        "1000 genomes"
+      ],
+      "adapter": {
+        "type": "VcfTabixAdapter",
+        "vcfGzLocation": {
+          "uri": "https://s3.amazonaws.com/1000genomes/release/20130502/ALL.wgs.phase3_shapeit2_mvncall_integrated_v5b.20130502.sites.vcf.gz"
+        },
+        "index": {
+          "location": {
+            "uri": "https://s3.amazonaws.com/1000genomes/release/20130502/ALL.wgs.phase3_shapeit2_mvncall_integrated_v5b.20130502.sites.vcf.gz.tbi"
+          }
+        }
+      },
+      "renderers": {
+        "PileupRenderer": {
+          "type": "PileupRenderer"
+        },
+        "SvgFeatureRenderer": {
+          "type": "SvgFeatureRenderer"
+        }
+      }
+    }, 
     {
       "type": "AlignmentsTrack",
       "trackId": "skbr3_pacbio",

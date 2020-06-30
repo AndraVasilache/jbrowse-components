@@ -26,7 +26,7 @@ export const useStyles = makeStyles(theme => ({
   },
   fieldName: {
     wordBreak: 'break-all',
-    minWidth: '90px',
+    minWidth: '137px', //TODO: ask robert
     maxWidth: '150px',
     borderBottom: '1px solid #0003',
     backgroundColor: theme.palette.grey[200],
@@ -187,9 +187,11 @@ const Attributes: FunctionComponent<AttributeProps> = props => {
     </>
   )
 }
+
 Attributes.propTypes = {
   attributes: PropTypes.objectOf(PropTypes.any).isRequired,
 }
+
 const BaseAttributes = (props: BaseProps) => {
   const { feature } = props
   return (
@@ -197,6 +199,11 @@ const BaseAttributes = (props: BaseProps) => {
       <Attributes {...props} attributes={feature} />
     </BaseCard>
   )
+}
+
+const BaseTranscripts = (props: BaseProps) => {
+  const { feature } = props
+  return <Attributes {...props} attributes={feature} />
 }
 
 interface BaseInputProps extends BaseCardProps {
@@ -216,5 +223,5 @@ const BaseFeatureDetails = (props: BaseInputProps) => {
   )
 }
 
-export { BaseCoreDetails, BaseAttributes }
+export { BaseCoreDetails, BaseAttributes, BaseTranscripts, Attributes }
 export default observer(BaseFeatureDetails)

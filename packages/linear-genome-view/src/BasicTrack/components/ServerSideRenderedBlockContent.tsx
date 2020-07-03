@@ -33,7 +33,6 @@ const useStyles = makeStyles(theme => ({
   },
   blockError: {
     padding: theme.spacing(2),
-    pointerEvents: 'none',
     width: '100%',
   },
 }))
@@ -86,7 +85,12 @@ function BlockError({ error, reload }: { error: Error; reload: () => void }) {
   return (
     <div className={classes.blockError}>
       {reload ? (
-        <Button onClick={reload} size="small" startIcon={<RefreshIcon />}>
+        <Button
+          data-testid="reload_button"
+          onClick={reload}
+          size="small"
+          startIcon={<RefreshIcon />}
+        >
           Reload
         </Button>
       ) : null}

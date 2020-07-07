@@ -1,12 +1,12 @@
 {
-  "name": "@gmod/jbrowse-plugin-variants",
+  "name": "@gmod/ensembl-plugin-integration",
   "version": "2.0.0",
   "description": "Ensembl integration.",
   "main": "src/index.ts",
   "scripts": {
-    "test": "cd ../..; jest packages/variants"
+    "test": "cd ../..; jest packages/ensembl"
   },
-  "author": "Garrett Stevens",
+  "author": "Andra Vasilache",
   "license": "MIT",
   "dependencies": {
     "@gmod/tabix": "^1.4.6",

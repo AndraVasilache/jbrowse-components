@@ -21,4 +21,4 @@ export const stateModel = types
     },
   }))
 
-export const ReactComponent = import('./VariantFeatureDrawerWidget')
+export const ReactComponent = import('./')

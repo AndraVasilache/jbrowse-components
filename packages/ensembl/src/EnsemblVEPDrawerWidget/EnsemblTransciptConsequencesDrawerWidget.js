@@ -50,56 +50,56 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-function VariantSamples(props) {
-  const classes = useStyles()
-  const { feature } = props
-  if (!feature.samples) {
-    return null
-  }
-  const ret = Object.keys(feature.samples)
-  if (!ret.length) {
-    return null
-  }
-  const infoFields = Object.keys(feature.samples[ret[0]])
+// function VariantSamples(props) {
+//   const classes = useStyles()
+//   const { feature } = props
+//   if (!feature.samples) {
+//     return null
+//   }
+//   const ret = Object.keys(feature.samples)
+//   if (!ret.length) {
+//     return null
+//   }
+//   const infoFields = Object.keys(feature.samples[ret[0]])
 
-  return (
-    <BaseCard {...props} title="Samples">
-      <div style={{ width: '100%', maxHeight: 600, overflow: 'auto' }}>
-        <Table className={classes.table}>
-          <TableHead>
-            <TableRow>
-              <TableCell>Sample</TableCell>
-              {infoFields.map(f => (
-                <TableCell key={f}>{f}</TableCell>
-              ))}
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {Object.entries(feature.samples).map(
-              ([key, value]) =>
-                value && (
-                  <TableRow key={key}>
-                    <TableCell component="th" scope="row">
-                      {key}
-                    </TableCell>
-                    {infoFields.map(f => (
-                      <TableCell className={classes.valueCell} key={f}>
-                        {String(value[f])}
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                ),
-            )}
-          </TableBody>
-        </Table>
-      </div>
-    </BaseCard>
-  )
-}
+//   return (
+//     <BaseCard {...props} title="Samples">
+//       <div style={{ width: '100%', maxHeight: 600, overflow: 'auto' }}>
+//         <Table className={classes.table}>
+//           <TableHead>
+//             <TableRow>
+//               <TableCell>Sample</TableCell>
+//               {infoFields.map(f => (
+//                 <TableCell key={f}>{f}</TableCell>
+//               ))}
+//             </TableRow>
+//           </TableHead>
+//           <TableBody>
+//             {Object.entries(feature.samples).map(
+//               ([key, value]) =>
+//                 value && (
+//                   <TableRow key={key}>
+//                     <TableCell component="th" scope="row">
+//                       {key}
+//                     </TableCell>
+//                     {infoFields.map(f => (
+//                       <TableCell className={classes.valueCell} key={f}>
+//                         {String(value[f])}
+//                       </TableCell>
+//                     ))}
+//                   </TableRow>
+//                 ),
+//             )}
+//           </TableBody>
+//         </Table>
+//       </div>
+//     </BaseCard>
+//   )
+// }
 
-VariantSamples.propTypes = {
-  feature: PropTypes.shape().isRequired,
-}
+// VariantSamples.propTypes = {
+//   feature: PropTypes.shape().isRequired,
+// }
 
 function VariantFeatureDetails(props) {
   const consequences = []
@@ -110,7 +110,6 @@ function VariantFeatureDetails(props) {
   const { samples, ...rest } = feat
   const { ALT, CHROM, start, end } = feat
   const query = `${CHROM}:${start}:${end}/${ALT[0]}`
-  //const query = "1:6524705:6524705/T"
 
   useEffect(() => {
     const controller = new AbortController()
@@ -179,10 +178,10 @@ function VariantFeatureDetails(props) {
 
   return (
     <Paper className={classes.root} data-testid="variant-side-drawer">
-      <BaseFeatureDetail feature={rest} {...props} />
+      {/* <BaseFeatureDetail feature={rest} {...props} />
       <Divider />
       <VariantSamples feature={feat} {...props} />
-      <Divider />
+      <Divider /> */}
       <BaseCard {...props} title="Consequences">
         {consequences ? (
           consequences.map(elem => (

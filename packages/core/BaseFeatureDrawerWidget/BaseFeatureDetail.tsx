@@ -26,7 +26,7 @@ export const useStyles = makeStyles(theme => ({
   },
   fieldName: {
     wordBreak: 'break-all',
-    minWidth: '137px', //TODO: ask robert
+    minWidth: '137px',
     maxWidth: '150px',
     borderBottom: '1px solid #0003',
     backgroundColor: theme.palette.grey[200],

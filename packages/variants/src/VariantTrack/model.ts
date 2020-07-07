@@ -10,8 +10,8 @@ import {
 import { Feature } from '@gmod/jbrowse-core/util/simpleFeature'
 import { blockBasedTrackModel } from '@gmod/jbrowse-plugin-linear-genome-view'
 import { types } from 'mobx-state-tree'
+import StorageIcon from '@material-ui/icons/Storage'
 import { VariantTrackConfigModel } from './configSchema'
-import StorageIcon from '@material-ui/icons/Storage';
 
 // using a map because it preserves order
 const rendererTypes = new Map([
@@ -81,9 +81,29 @@ export default (configSchema: VariantTrackConfigModel) =>
         return self.contextMenuFeature
           ? [
               {
+                label: 'Open feature details',
+                icon: StorageIcon,
+                onClick: () => {
+                  if (self.contextMenuFeature) {
+                    self.selectFeature(self.contextMenuFeature)
+                  }
+                },
+              },
+              {
                 label: 'Ensembl VEP',
                 icon: StorageIcon,
-                onClick: () => {},
+                onClick: () => {
+                  console.log('hello')
+                  const session = getSession(self)
+                  if (isSessionModelWithDrawerWidgets(session)) {
+                    const featureWidget = session.addDrawerWidget(
+                      'EnsemblVEPDrawerWidget',
+                      'ensemblVEPDrawerWidget',
+                      { featureData: self.contextMenuFeature?.toJSON() },
+                    )
+                    session.showDrawerWidget(featureWidget)
+                  }
+                },
               },
             ]
           : []

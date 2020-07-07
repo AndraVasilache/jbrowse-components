@@ -49,6 +49,7 @@ export const useStyles = makeStyles(theme => ({
     overflow: 'auto',
   },
 }))
+
 const coreRenderedDetails = [
   'Position',
   'Description',

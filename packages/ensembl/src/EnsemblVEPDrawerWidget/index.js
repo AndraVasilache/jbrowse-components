@@ -21,4 +21,6 @@ export const stateModel = types
     },
   }))
 
-export const ReactComponent = import('./')
+export const ReactComponent = import(
+  './EnsemblTransciptConsequencesDrawerWidget'
+)

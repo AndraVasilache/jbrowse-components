@@ -26,8 +26,8 @@ export const useStyles = makeStyles(theme => ({
   },
   fieldName: {
     wordBreak: 'break-all',
-    minWidth: '137px',
-    maxWidth: '150px',
+    minWidth: '165px',
+    maxWidth: '200px',
     borderBottom: '1px solid #0003',
     backgroundColor: theme.palette.grey[200],
     marginRight: theme.spacing(1),
@@ -204,6 +204,8 @@ const BaseAttributes = (props: BaseProps) => {
 
 const BaseTranscripts = (props: BaseProps) => {
   const { feature } = props
+  delete feature.transcript_id
+  delete feature.intergenic_consequence
   return <Attributes {...props} attributes={feature} />
 }
 

@@ -48,58 +48,15 @@ const useStyles = makeStyles(theme => ({
   valbox: {
     border: '1px solid #bbb',
   },
+  transcriptId: {
+    fontSize: '1.1em',
+    borderBottom: '1px solid #0003',
+    backgroundColor: '#a6c1cf',
+    marginRight: theme.spacing(1),
+    padding: theme.spacing(0.5),
+    textAlign: 'center',
+  },
 }))
-
-// function VariantSamples(props) {
-//   const classes = useStyles()
-//   const { feature } = props
-//   if (!feature.samples) {
-//     return null
-//   }
-//   const ret = Object.keys(feature.samples)
-//   if (!ret.length) {
-//     return null
-//   }
-//   const infoFields = Object.keys(feature.samples[ret[0]])
-
-//   return (
-//     <BaseCard {...props} title="Samples">
-//       <div style={{ width: '100%', maxHeight: 600, overflow: 'auto' }}>
-//         <Table className={classes.table}>
-//           <TableHead>
-//             <TableRow>
-//               <TableCell>Sample</TableCell>
-//               {infoFields.map(f => (
-//                 <TableCell key={f}>{f}</TableCell>
-//               ))}
-//             </TableRow>
-//           </TableHead>
-//           <TableBody>
-//             {Object.entries(feature.samples).map(
-//               ([key, value]) =>
-//                 value && (
-//                   <TableRow key={key}>
-//                     <TableCell component="th" scope="row">
-//                       {key}
-//                     </TableCell>
-//                     {infoFields.map(f => (
-//                       <TableCell className={classes.valueCell} key={f}>
-//                         {String(value[f])}
-//                       </TableCell>
-//                     ))}
-//                   </TableRow>
-//                 ),
-//             )}
-//           </TableBody>
-//         </Table>
-//       </div>
-//     </BaseCard>
-//   )
-// }
-
-// VariantSamples.propTypes = {
-//   feature: PropTypes.shape().isRequired,
-// }
 
 function VariantFeatureDetails(props) {
   const consequences = []
@@ -134,64 +91,44 @@ function VariantFeatureDetails(props) {
   }, [query])
 
   if (data !== undefined) {
-    console.log(data)
     let array = data[0].transcript_consequences
     if (array !== undefined) {
-      array.forEach(arrayItem => {
+      array.forEach(elem => {
         const x = {}
-
-        if (arrayItem.transcript_id !== undefined) {
-          x.transcript_id = arrayItem.transcript_id
-        }
-
-        if (arrayItem.consequence_terms !== undefined) {
-          x.consequence_terms = arrayItem.consequence_terms.join(', ')
-        }
-
-        if (arrayItem.biotype !== undefined) {
-          x.biotype = arrayItem.biotype
-        }
-
-        if (arrayItem.impact !== undefined) {
-          x.impact = arrayItem.impact
-        }
+        x.transcript_id = elem.transcript_id
+        x.consequence_terms = elem.consequence_terms.join(', ')
+        x.biotype = elem.biotype
+        x.impact = elem.impact
         consequences.push(x)
       })
     } else {
       array = data[0].intergenic_consequences
       if (array !== undefined) {
-        array.forEach(arrayItem => {
+        array.forEach((elem, index) => {
           const x = {}
-
-          if (arrayItem.consequence_terms !== undefined) {
-            x.consequence_terms = arrayItem.consequence_terms.join(', ')
-          }
-
-          if (arrayItem.impact !== undefined) {
-            x.impact = arrayItem.impact
-          }
+          x.intergenic_consequence = index + 1
+          x.consequence_terms = elem.consequence_terms.join(', ')
+          x.impact = elem.impact
           consequences.push(x)
         })
       }
     }
   }
 
+  // TODO: make table header name visible on hover
+
   return (
     <Paper className={classes.root} data-testid="variant-side-drawer">
-      {/* <BaseFeatureDetail feature={rest} {...props} />
-      <Divider />
-      <VariantSamples feature={feat} {...props} />
-      <Divider /> */}
       <BaseCard {...props} title="Consequences">
-        {consequences ? (
+        {consequences &&
           consequences.map(elem => (
-            <div key={elem.transcript_id}>
-              <BaseTranscripts feature={elem} {...props} /> <Divider />
+            <div key={elem.transcript_id || elem.intergenic_consequence}>
+              <div className={classes.transcriptId}>
+                {elem.transcript_id || elem.intergenic_consequence}
+              </div>
+              <BaseTranscripts feature={elem} {...props} />
             </div>
-          ))
-        ) : (
-          <div> loading </div>
-        )}
+          ))}
       </BaseCard>
     </Paper>
   )

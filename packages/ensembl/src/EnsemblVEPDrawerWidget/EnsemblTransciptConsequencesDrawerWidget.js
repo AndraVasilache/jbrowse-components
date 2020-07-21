@@ -1,20 +1,15 @@
 import Divider from '@material-ui/core/Divider'
 import Paper from '@material-ui/core/Paper'
 import { makeStyles } from '@material-ui/core/styles'
-import Table from '@material-ui/core/Table'
-import TableBody from '@material-ui/core/TableBody'
-import TableCell from '@material-ui/core/TableCell'
-import TableHead from '@material-ui/core/TableHead'
-import TableRow from '@material-ui/core/TableRow'
+import Tooltip from '@material-ui/core/Tooltip'
+import Button from '@material-ui/core/Button'
 import { observer, PropTypes as MobxPropTypes } from 'mobx-react'
-import PropTypes, { element } from 'prop-types'
 import React, { useState, useEffect } from 'react'
-import BaseFeatureDetail, {
+
+import {
   BaseCard,
-  BaseAttributes,
   BaseTranscripts,
 } from '@gmod/jbrowse-core/BaseFeatureDrawerWidget/BaseFeatureDetail'
-import { async } from 'rxjs/internal/scheduler/async'
 
 const useStyles = makeStyles(theme => ({
   table: {
@@ -58,6 +53,10 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
+// function consola(e) {
+//   console.log('merge cred?')
+// }
+
 function VariantFeatureDetails(props) {
   const consequences = []
   const [data, setData] = useState()
@@ -67,6 +66,7 @@ function VariantFeatureDetails(props) {
   const { samples, ...rest } = feat
   const { ALT, CHROM, start, end } = feat
   const query = `${CHROM}:${start}:${end}/${ALT[0]}`
+  const species = 'human'
 
   useEffect(() => {
     const controller = new AbortController()
@@ -74,7 +74,7 @@ function VariantFeatureDetails(props) {
     async function ensembl() {
       try {
         const response = await fetch(
-          `https://rest.ensembl.org/vep/human/region/${query}?content-type=application/json`,
+          `https://rest.ensembl.org/vep/${species}/region/${query}?content-type=application/json`,
           { signal },
         )
         const content = await response.json()
@@ -106,7 +106,7 @@ function VariantFeatureDetails(props) {
       if (array !== undefined) {
         array.forEach((elem, index) => {
           const x = {}
-          x.intergenic_consequence = index + 1
+          x.intergenic_consequence = `auto generated index ${index + 1}`
           x.consequence_terms = elem.consequence_terms.join(', ')
           x.impact = elem.impact
           consequences.push(x)
@@ -123,9 +123,18 @@ function VariantFeatureDetails(props) {
         {consequences &&
           consequences.map(elem => (
             <div key={elem.transcript_id || elem.intergenic_consequence}>
-              <div className={classes.transcriptId}>
-                {elem.transcript_id || elem.intergenic_consequence}
-              </div>
+              <Tooltip
+                title={
+                  elem.transcript_id
+                    ? 'transcript id'
+                    : 'intergenic consequence id'
+                }
+                arrow
+              >
+                <div className={classes.transcriptId}>
+                  {elem.transcript_id || elem.intergenic_consequence}
+                </div>
+              </Tooltip>
               <BaseTranscripts feature={elem} {...props} />
             </div>
           ))}

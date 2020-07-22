@@ -12,6 +12,7 @@ import PropTypes from 'prop-types'
 import React, { FunctionComponent } from 'react'
 import isObject from 'is-object'
 import SanitizedHTML from '../ui/SanitizedHTML'
+import Tooltip from '@material-ui/core/Tooltip'
 
 export const useStyles = makeStyles(theme => ({
   expansionPanelDetails: {
@@ -142,10 +143,16 @@ interface AttributeProps {
 
 const Attributes: FunctionComponent<AttributeProps> = props => {
   const classes = useStyles()
-  const { attributes } = props
+  const { attributes, descriptions } = props
   const SimpleValue = ({ name, value }: { name: string; value: any }) => (
     <div style={{ display: 'flex' }}>
-      <div className={classes.fieldName}>{name}</div>
+      {descriptions && descriptions[name] ? (
+        <Tooltip title={descriptions[name]}>
+          <div className={classes.fieldName}>{name}</div>
+        </Tooltip>
+      ) : (
+        <div className={classes.fieldName}>{name}</div>
+      )}
       <div className={classes.fieldValue}>
         <SanitizedHTML
           html={isObject(value) ? JSON.stringify(value) : String(value)}
@@ -202,13 +209,6 @@ const BaseAttributes = (props: BaseProps) => {
   )
 }
 
-const BaseTranscripts = (props: BaseProps) => {
-  const { feature } = props
-  delete feature.transcript_id
-  delete feature.intergenic_consequence
-  return <Attributes {...props} attributes={feature} />
-}
-
 interface BaseInputProps extends BaseCardProps {
   model: any
 }
@@ -226,5 +226,5 @@ const BaseFeatureDetails = (props: BaseInputProps) => {
   )
 }
 
-export { BaseCoreDetails, BaseAttributes, BaseTranscripts, Attributes }
+export { BaseCoreDetails, BaseAttributes, Attributes }
 export default observer(BaseFeatureDetails)

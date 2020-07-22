@@ -8,7 +8,7 @@ import React, { useState, useEffect } from 'react'
 
 import {
   BaseCard,
-  BaseTranscripts,
+  Attributes
 } from '@gmod/jbrowse-core/BaseFeatureDrawerWidget/BaseFeatureDetail'
 
 const useStyles = makeStyles(theme => ({
@@ -53,9 +53,14 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-// function consola(e) {
-//   console.log('merge cred?')
-// }
+const BaseTranscripts = (props) => {
+  const { feature } = props
+  delete feature.intergenic_consequence
+  delete feature.transcript_id
+
+  const descriptions = {consequence_terms: "test",biotype: "biotype",  impact: "jrenf"}
+  return <Attributes {...props} attributes={feature} descriptions={descriptions}/>
+}
 
 function VariantFeatureDetails(props) {
   const consequences = []

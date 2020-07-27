@@ -6,6 +6,7 @@ import Typography from '@material-ui/core/Typography'
 import ExpandMore from '@material-ui/icons/ExpandMore'
 import Divider from '@material-ui/core/Divider'
 import Paper from '@material-ui/core/Paper'
+import Tooltip from '@material-ui/core/Tooltip'
 import { makeStyles } from '@material-ui/core/styles'
 import { observer } from 'mobx-react'
 import React, { FunctionComponent } from 'react'
@@ -137,24 +138,23 @@ interface AttributeProps {
 
 const Attributes: FunctionComponent<AttributeProps> = props => {
   const classes = useStyles()
-  const {
-    attributes,
-    omit: propOmit = [],
-    formatter = (value: unknown) => (
-      <SanitizedHTML
-        html={isObject(value) ? JSON.stringify(value) : String(value)}
-      />
-    ),
-  } = props
-
-  const SimpleValue = ({ name, value }: { name: string; value: any }) => {
-    return (
-      <div style={{ display: 'flex' }}>
+  const { attributes, descriptions } = props
+  const SimpleValue = ({ name, value }: { name: string; value: any }) => (
+    <div style={{ display: 'flex' }}>
+      {descriptions && descriptions[name] ? (
+        <Tooltip title={descriptions[name]}>
+          <div className={classes.fieldName}>{name}</div>
+        </Tooltip>
+      ) : (
         <div className={classes.fieldName}>{name}</div>
-        <div className={classes.fieldValue}>{formatter(value)}</div>
+      )}
+      <div className={classes.fieldValue}>
+        <SanitizedHTML
+          html={isObject(value) ? JSON.stringify(value) : String(value)}
+        />
       </div>
-    )
-  }
+    </div>
+  )
   const ArrayValue = ({ name, value }: { name: string; value: any[] }) => (
     <div style={{ display: 'flex' }}>
       <div className={classes.fieldName}>{name}</div>
@@ -171,12 +171,10 @@ const Attributes: FunctionComponent<AttributeProps> = props => {
   return (
     <>
       {Object.entries(attributes)
-        .filter(
-          ([k, v]) =>
-            v !== undefined && !omit.includes(k) && !propOmit.includes(k),
-        )
+        .filter(([k, v]) => v !== undefined && !omit.includes(k))
         .map(([key, value]) => {
           if (Array.isArray(value)) {
+            // eslint-disable-next-line react/prop-types
             return value.length === 1 ? (
               <SimpleValue key={key} name={key} value={value[0]} />
             ) : (

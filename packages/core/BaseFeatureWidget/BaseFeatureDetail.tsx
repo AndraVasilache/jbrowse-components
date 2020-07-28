@@ -134,6 +134,7 @@ interface AttributeProps {
   attributes: Record<string, any>
   omit?: string[]
   formatter?: (val: unknown) => JSX.Element
+  descriptions: any
 }
 
 const Attributes: FunctionComponent<AttributeProps> = props => {

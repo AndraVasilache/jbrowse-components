@@ -157,7 +157,13 @@ const Attributes: FunctionComponent<AttributeProps> = props => {
   )
   const ArrayValue = ({ name, value }: { name: string; value: any[] }) => (
     <div style={{ display: 'flex' }}>
-      <div className={classes.fieldName}>{name}</div>
+      {descriptions && descriptions[name] ? (
+        <Tooltip title={descriptions[name]}>
+          <div className={classes.fieldName}>{name}</div>
+        </Tooltip>
+      ) : (
+        <div className={classes.fieldName}>{name}</div>
+      )}
       {value.map((val, i) => (
         <div key={`${name}-${i}`} className={classes.fieldSubvalue}>
           <SanitizedHTML
@@ -174,7 +180,6 @@ const Attributes: FunctionComponent<AttributeProps> = props => {
         .filter(([k, v]) => v !== undefined && !omit.includes(k))
         .map(([key, value]) => {
           if (Array.isArray(value)) {
-            // eslint-disable-next-line react/prop-types
             return value.length === 1 ? (
               <SimpleValue key={key} name={key} value={value[0]} />
             ) : (
